@@ -1,0 +1,3 @@
+name = Bibsdb Search Context
+description = Override functionality in Ting Search Context.
+core = 7.x

@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * Implements default preprocess function for the search context.
+ * Make it possible to track specific contexts in webtrends.
+ */
+function bibsdb_search_context_preprocess_ting_search_context(&$vars, $hook) {
+  $context = ting_search_context_load($vars['context_id'], FALSE);
+  // Strip special characters and spaces
+  $context_name = preg_replace('@[^a-z0-9-]+@','-', strtolower($context->name));
+
+  // Add Javascript settings
+  drupal_add_js(array('ting_search_context_name' => $context_name), 'setting');
+
+  // Add js script
+  $path = drupal_get_path('module', 'bibsdb_search_context');
+  drupal_add_js($path . '/js/bibsdb_search_context.js');
+}
