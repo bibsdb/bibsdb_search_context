@@ -20,11 +20,11 @@
 
     $('.pane-search-context a').each(function(index) {
       var href = $(this).prop("href");
-      $(this).prop("href", href + param);  
+      // Only add the extra param if ting_search_context has already append the base param
+      if (href.indexOf("searchcontext") > -1 ) {
+        $(this).prop("href", href + param);
+      }  
     });
-
-    console.log($('.pane-search-context').html());
-
   });
 
  
