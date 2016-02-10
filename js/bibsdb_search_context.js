@@ -14,17 +14,14 @@
   "use strict";
 
   $(document).bind("ajaxComplete", function() {
-    //$(".pane-search-context a").prop("href", "http://www.jakcms.com");
     var context_name = Drupal.settings.ting_search_context_name;
     var param = "&WT.ac=" + context_name;
 
-    $('.pane-search-context a').each(function(index) {
+    $(".pane-search-context a[href*='searchcontext']").each(function() {
       var href = $(this).prop("href");
-      // Only add the extra param if ting_search_context has already append the base param
-      // Only add the extra param if it hasn't already been added
-      if (href.indexOf("searchcontext") > -1 && href.indexOf(context_name == -1)) {
+      if ($(this).prop("href").indexOf(context_name) == -1) {
         $(this).prop("href", href + param);
-      }  
+      }
     });
   });
 
