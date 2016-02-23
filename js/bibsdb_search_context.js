@@ -15,8 +15,10 @@
 
   $(document).bind("ajaxComplete", function() {
     var context_name = Drupal.settings.ting_search_context_name;
-    var param = "&WT.ac=" + context_name;
+    var param = ";" + context_name;
 
+    // Only on internal links the Webtrends param is added by ting_search_context. 
+    // We only append if it's there
     $(".pane-search-context a[href*='searchcontext']").each(function() {
       var href = $(this).prop("href");
       if ($(this).prop("href").indexOf(context_name) == -1) {
