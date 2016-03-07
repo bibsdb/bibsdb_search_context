@@ -27,7 +27,7 @@
       title = title.replace(/[^a-z0-9-]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
       title = title.toLowerCase();
       var param = "WT.ac=" + context_name;
-      param = param + ";WT.ac=" + title;
+      param = param + ";" + title;
    
       // Work on href
       var href = $(this).prop("href");
