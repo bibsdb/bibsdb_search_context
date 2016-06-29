@@ -1,10 +1,11 @@
 name = Bibsdb Search Context
 description = Override functionality in Ting Search Context.
-core = 7.x 
+core = 7.x
 package = Bibsdb
 dependencies[] = entityreference
 dependencies[] = features
 features[features_api][] = api:2
 features[field_base][] = field_bibsdb_internal_link
 features[field_instance][] = node-ding_search_context_link-field_bibsdb_internal_link
+mtime = 1467029788
 project path = sites/default/modules

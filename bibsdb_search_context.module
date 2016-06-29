@@ -1,27 +1,104 @@
 <?php
 
 /**
- * Implements default preprocess function for the search context.
+ * Implements preprocess function for the search context.
  * Make it possible to track specific contexts in webtrends.
  */
 function bibsdb_search_context_preprocess_ting_search_context(&$vars, $hook) {
-  $context = ting_search_context_load($vars['context_id'], FALSE);
+	$context = ting_search_context_load($vars['context_id'], FALSE);
   // Strip special characters and spaces
-  $context_name = preg_replace('@[^a-z0-9-]+@','-', strtolower($context->name));
+	$context_name = preg_replace('@[^a-z0-9-]+@','-', strtolower($context->name));
 
   // Add Javascript settings
-  drupal_add_js(array('ting_search_context_name' => $context_name), 'setting');
+	drupal_add_js(array('ting_search_context_name' => $context_name), 'setting');
 
   // Add js script
-  $path = drupal_get_path('module', 'bibsdb_search_context');
-  drupal_add_js($path . '/js/bibsdb_search_context.js');
+	$path = drupal_get_path('module', 'bibsdb_search_context');
+	drupal_add_js($path . '/js/bibsdb_search_context.js');
 }
 
 /**
  * Implements hook_ting_search_context_field_name().
  */
 function bibsdb_search_context_ting_search_context_field_name() {
-  return array(
-    'ding_group' => 'field_ding_group_list_image',
-  );
+	return array(
+		'ding_group' => 'field_ding_group_list_image',
+		);
+}
+
+/**
+ * Implements preprocess function for the search context content.
+ * Note - There is dublicate code in bibsdb_expose.module in bibsdb_expose_build_url.
+ * Support internal link field in ding_search_context_link.
+ * The derived url is created upon saving the node but is recreated when the node is shown by Search Context Module or Expose module, 
+ * because there is a risk that the link is stale if the node has been renamed.
+ */
+function bibsdb_search_context_preprocess_ting_search_context_content(&$vars, $hook) {
+	$node = $vars['node'];
+	$wrapper = entity_metadata_wrapper('node', $node);
+	if ($node->type == 'ding_search_context_link') {
+		
+		$internal = $wrapper->field_bibsdb_internal_link;
+		dd($internal->getIdentifier());
+		if ($internal->value() != null) {
+			$url = url('node/' . $internal->getIdentifier(), array('absolute' => TRUE, 'query' => array('WT.ac' => 'searchcontext')));
+			$vars['url'] = $url;
+		}
+	}
+}
+
+
+/**
+ * Implements hook_node_presave. 
+ * field_search_context_link needs to have a value. Ting Search Context module expects it.
+ * If none exists create a link derived from internal link. Else fill with frontpage.
+ * The derived url will be recreated when the node is shown by Search Context Module or Expose module, 
+ * because there is a risk that the link is stale if the node has been renamed.
+ * 
+ * 
+ * @param $node
+ */
+function bibsdb_search_context_node_presave($node) {
+
+	if($node->type == 'ding_search_context_link') {
+		_fill_external_link($node);
+	}
+}
+
+function _fill_external_link(&$node) {
+	$wrapper = entity_metadata_wrapper('node', $node);
+
+	$external = $wrapper->field_search_context_link->value();
+	$internal = $wrapper->field_bibsdb_internal_link;
+
+	// If external link is not set
+	if (!(isset($external))) {
+		// If internal link is set
+		if ($internal->value() != null) {
+			$url = url('node/' . $internal->getIdentifier());
+		}
+		// There needs to be a value in field_search_context_link - set it to frontpage
+		else {
+			$url = url();
+		}
+		$wrapper->field_search_context_link->set(array('url' => $url));
+		$wrapper->save();
+	}
+	
+}
+
+
+/*
+ * Public: Implements hook_form_FORM_ID_alter.
+ *
+ * Hide the external link field. This content type is for internal links only.
+ */
+function bibsdb_search_context_form_node_form_alter(&$form, $form_state) {
+
+  $type = $form['#node']->type;
+
+	// On ding_search_context_link hide a field
+  if ($type == 'ding_search_context_link') {
+    $form['field_search_context_link']['#access'] = FALSE;
+  }  
 }
