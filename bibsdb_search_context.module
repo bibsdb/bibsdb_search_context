@@ -39,7 +39,7 @@ function bibsdb_search_context_preprocess_ting_search_context_content(&$vars, $h
 	if ($node->type == 'ding_search_context_link') {
 		
 		$internal = $wrapper->field_bibsdb_internal_link;
-		dd($internal->getIdentifier());
+
 		if ($internal->value() != null) {
 			$url = url('node/' . $internal->getIdentifier(), array('absolute' => TRUE, 'query' => array('WT.ac' => 'searchcontext')));
 			$vars['url'] = $url;
