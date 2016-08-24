@@ -15,7 +15,7 @@ function bibsdb_search_context_field_default_field_instances() {
     'bundle' => 'ding_search_context_link',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Tast en del af titlen og vælg på listen. <br/> <b> Du skal enten udfylde internt link ELLER eksternt link. </b>',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -41,7 +41,7 @@ function bibsdb_search_context_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_bibsdb_internal_link',
-    'label' => 'Internal link',
+    'label' => 'Internt link',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -61,7 +61,8 @@ function bibsdb_search_context_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Internal link');
+  t('Internt link');
+  t('Tast en del af titlen og vælg på listen. <br/> <b> Du skal enten udfylde internt link ELLER eksternt link. </b>');
 
   return $field_instances;
 }
