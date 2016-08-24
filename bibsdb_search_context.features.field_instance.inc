@@ -42,7 +42,7 @@ function bibsdb_search_context_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'field_bibsdb_internal_link',
     'label' => 'Internal link',
-    'required' => 1,
+    'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
     ),
@@ -55,7 +55,7 @@ function bibsdb_search_context_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'entityreference_autocomplete',
-      'weight' => 41,
+      'weight' => 7,
     ),
   );
 
