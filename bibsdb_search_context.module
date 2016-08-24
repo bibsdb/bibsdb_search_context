@@ -31,3 +31,109 @@ function bibsdb_search_context_ting_search_context_field_name() {
 		'ding_group' => 'field_ding_group_list_image',
 		);
 }
+
+/**
+ * Implements preprocess function for the search context content.
+ * Note - There is dublicate code in bibsdb_expose.module in bibsdb_expose_build_url.
+ * Support internal and external link field in ding_search_context_link.
+ * The derived url is created upon saving the node but is recreated when the node is shown by Search Context Module or Expose module, 
+ * because there is a risk that the link is stale if the node has been renamed.
+ */
+function bibsdb_search_context_preprocess_ting_search_context_content(&$vars, $hook) {
+	$node = $vars['node'];
+	if ($node->type == 'ding_search_context_link') {
+
+		// Update the search context link from internal or external link field
+		_fill_search_context_link($node, TRUE);
+    $wrapper = entity_metadata_wrapper('node', $node);
+
+    $url = $wrapper->field_search_context_link->value()['url'];
+
+		// Add the searchcontext param
+		$url = url($url, array('absolute' => TRUE, 'query' => array('WT.ac' => 'searchcontext')));
+		$vars['url'] = $url;
+		
+	}
+}
+
+
+/**
+ * Implements hook_node_presave. 
+ * field_search_context_link needs to have a value. Ting Search Context module expects it.
+ * Create one from internal link or external url.
+ * The derived url will be recreated when the node is shown by Search Context Module or Expose module, 
+ * because there is a risk that the link is stale if the node has been renamed.
+ * 
+ * 
+ * @param $node
+ */
+function bibsdb_search_context_node_presave($node) {
+
+	if($node->type == 'ding_search_context_link') {
+		_fill_search_context_link($node, FALSE);
+	}
+}
+
+function bibsdb_search_context_node_validate($node, $form, &$form_state) {
+
+	if($node->type == 'ding_search_context_link') {
+		_validate_external_and_internal_link($node);
+	}
+}
+
+
+function _validate_external_and_internal_link(&$node) {
+	$wrapper = entity_metadata_wrapper('node', $node);
+	$internal = $wrapper->field_bibsdb_internal_link->getIdentifier();
+	$external = $wrapper->field_bibsdb_external_link->url->value();
+
+	if (!($internal) && !($external)) {
+		form_set_error('Link2', t('You have to set one of the fields: Internal link or external link.'));
+	}
+
+	if ($internal && $external) {
+		form_set_error('Link3', t('You can only set one of the fields: Internal link or external link.'));
+	}
+}
+
+function _fill_search_context_link(&$node, $save) {
+	$wrapper = entity_metadata_wrapper('node', $node);
+
+	$link = $wrapper->field_search_context_link->value();
+	$internal = $wrapper->field_bibsdb_internal_link->getIdentifier();
+	$external = $wrapper->field_bibsdb_external_link->value();
+	
+	$url = url(); // There needs to be a value in field_search_context_link - set it to frontpage
+	// If internal link is set
+	if ($internal) {
+		$url = url('node/' . $internal);
+	}
+	// If external link is set
+	elseif ($external) {
+		$url = $external['url'];
+	}
+	
+	$wrapper->field_search_context_link->set(array('url' => $url));
+
+	if ($save) {
+		$wrapper->save();
+	}
+	
+}
+
+
+
+/**
+ * Public: Implements hook_form_FORM_ID_alter.
+ *
+ * Hide the external link field. This content type is for internal links only.
+ */
+function bibsdb_search_context_form_node_form_alter(&$form, $form_state) {
+
+	$type = $form['#node']->type;
+
+	// On ding_search_context_link hide a field
+	if ($type == 'ding_search_context_link') {
+		$form['field_search_context_link']['#access'] = FALSE;
+	}  
+}
