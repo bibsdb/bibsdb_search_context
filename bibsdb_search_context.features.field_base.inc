@@ -64,25 +64,17 @@ function bibsdb_search_context_field_default_field_bases() {
     'locked' => 0,
     'module' => 'entityreference',
     'settings' => array(
-      'handler' => 'base',
+      'handler' => 'views',
       'handler_settings' => array(
         'behaviors' => array(
           'views-select-list' => array(
             'status' => 0,
           ),
         ),
-        'sort' => array(
-          'direction' => 'ASC',
-          'property' => 'title',
-          'type' => 'property',
-        ),
-        'target_bundles' => array(
-          'ding_eresource' => 'ding_eresource',
-          'ding_event' => 'ding_event',
-          'ding_group' => 'ding_group',
-          'ding_news' => 'ding_news',
-          'ding_page' => 'ding_page',
-          'new_materials' => 'new_materials',
+        'view' => array(
+          'args' => array(),
+          'display_name' => 'entityreference_1',
+          'view_name' => 'bibsdb_search_context_link_node_reference_view',
         ),
       ),
       'profile2_private' => FALSE,
