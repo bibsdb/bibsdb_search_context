@@ -20,5 +20,5 @@ features[field_instance][] = node-ding_search_context_link-field_bibsdb_internal
 features[field_instance][] = node-ding_search_context_link-field_bibsdb_sclink_lead
 features[variable][] = pathauto_node_ding_search_context_link_pattern
 features[views_view][] = bibsdb_search_context_link_node_reference_view
-mtime = 1473765926
+mtime = 1473766966
 project path = sites/default/modules
